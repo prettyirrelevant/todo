@@ -1,8 +1,8 @@
 """added models
 
-Revision ID: 7bd134b3eac7
+Revision ID: 41cf188cccfa
 Revises: 
-Create Date: 2020-12-25 10:45:06.668529
+Create Date: 2020-12-25 12:14:39.608295
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7bd134b3eac7'
+revision = '41cf188cccfa'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -30,7 +30,8 @@ def upgrade():
     sa.Column('email', sa.String(length=250), nullable=False),
     sa.Column('picture', sa.String(length=250), nullable=False),
     sa.Column('created_on', sa.DateTime(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email')
     )
     op.create_table('todos',
     sa.Column('id', sa.Integer(), nullable=False),

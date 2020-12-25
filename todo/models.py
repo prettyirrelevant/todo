@@ -9,7 +9,7 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 
-tags = db.Table(
+todo_tags = db.Table(
     "tags",
     db.Column("todo_id", db.Integer, db.ForeignKey("todos.id"), primary_key=True),
     db.Column("tag_id", db.Integer, db.ForeignKey("tags.id"), primary_key=True),
@@ -35,6 +35,12 @@ class Todo(db.Model):
     text = db.Column(db.Text, nullable=False)
     created_on = db.Column(db.DateTime, default=func.now())
     updated_on = db.Column(db.DateTime, default=func.now())
+    tags = db.relationship(
+        "Tag",
+        secondary=todo_tags,
+        backref=db.backref("todos", lazy="dynamic"),
+        lazy=True,
+    )
 
 
 class Tag(db.Model):

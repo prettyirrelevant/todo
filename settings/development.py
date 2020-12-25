@@ -15,4 +15,4 @@ CLIENT_SECRET = environ.get("CLIENT_SECRET")
 
 AUTH0_DOMAIN = "https://prettyirrelevant.us.auth0.com"
 
-CALLBACK_URL = "http://localhost:5000"
+CALLBACK_URL = "http://localhost:5000/callback"

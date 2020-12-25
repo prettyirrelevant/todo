@@ -21,7 +21,7 @@ class User(db.Model, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
-    email = db.Column(db.String(250), nullable=False)
+    email = db.Column(db.String(250), nullable=False, unique=True)
     picture = db.Column(db.String(250), nullable=False)
     created_on = db.Column(db.DateTime, default=func.now())
     todos = db.relationship("Todo", backref="user", lazy="dynamic")

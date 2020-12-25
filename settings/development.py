@@ -13,4 +13,4 @@ CLIENT_ID = environ.get("CLIENT_ID")
 
 CLIENT_SECRET = environ.get("CLIENT_SECRET")
 
-SOCIAL_AUTH_AUTH0_DOMAIN = "prettyirrelevant.us.auth0.com"
+AUTH0_DOMAIN = "prettyirrelevant.us.auth0.com"

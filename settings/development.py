@@ -14,3 +14,5 @@ CLIENT_ID = environ.get("CLIENT_ID")
 CLIENT_SECRET = environ.get("CLIENT_SECRET")
 
 AUTH0_DOMAIN = "https://prettyirrelevant.us.auth0.com"
+
+CALLBACK_URL = "http://localhost:5000"

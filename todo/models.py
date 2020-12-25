@@ -10,7 +10,7 @@ def load_user(user_id):
 
 
 todo_tags = db.Table(
-    "tags",
+    "todo_tags",
     db.Column("todo_id", db.Integer, db.ForeignKey("todos.id"), primary_key=True),
     db.Column("tag_id", db.Integer, db.ForeignKey("tags.id"), primary_key=True),
 )

@@ -1,9 +1,10 @@
 from urllib.parse import urlencode
 
-from flask import current_app as app, render_template, url_for, redirect, flash
+from flask import current_app as app, render_template, url_for, redirect, flash, request
 from flask_login import login_user, current_user, logout_user, login_required
 
 from . import oauth, db
+from .forms import AddTodoForm
 from .models import User
 
 auth0 = oauth.register(
@@ -19,7 +20,9 @@ auth0 = oauth.register(
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    form = AddTodoForm()
+
+    return render_template("index.html", form=form)
 
 
 @app.route("/login")
@@ -27,6 +30,12 @@ def login():
     return auth0.authorize_redirect(
         redirect_uri=app.config["CALLBACK_URL"], audience=""
     )
+
+
+@app.route("/add_todo", methods=["POST"])
+@login_required
+def add_todo():
+    form = AddTodoForm(request.form)
 
 
 @app.route("/callback")
@@ -47,7 +56,9 @@ def callback():
 
     # new registration
     new_user = User(
-        name=userinfo["name"], email=userinfo["email"], picture=userinfo["picture"]
+        name=userinfo["name"],
+        email=userinfo["email"],
+        picture=f"https://avatars.dicebear.com/4.5/api/human/{userinfo.get('name')}.svg",
     )
 
     try:
@@ -72,5 +83,5 @@ def logout():
         "returnTo": url_for("index", _external=True),
         "client_id": app.config["CLIENT_ID"],
     }
-    flash('logged out successfully', 'success')
+    flash("logged out successfully", "success")
     return redirect(auth0.api_base_url + "/v2/logout?" + urlencode(params))

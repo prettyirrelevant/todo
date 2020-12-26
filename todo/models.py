@@ -34,7 +34,7 @@ class Todo(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     text = db.Column(db.Text, nullable=False)
     created_on = db.Column(db.DateTime, default=func.now())
-    updated_on = db.Column(db.DateTime, onupdate=func.now())
+    updated_on = db.Column(db.DateTime, default=func.now())
     tags = db.relationship(
         "Tag",
         secondary=todo_tags,

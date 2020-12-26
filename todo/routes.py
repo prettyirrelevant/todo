@@ -1,7 +1,7 @@
 from urllib.parse import urlencode
 
 from flask import current_app as app, render_template, url_for, redirect, flash
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, current_user, logout_user, login_required
 
 from . import oauth, db
 from .models import User
@@ -65,6 +65,7 @@ def callback():
 
 
 @app.route("/logout")
+@login_required
 def logout():
     logout_user()
     params = {

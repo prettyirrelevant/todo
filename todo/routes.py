@@ -21,7 +21,15 @@ auth0 = oauth.register(
 @app.route("/")
 def index():
     form = AddTodoForm()
-    return render_template("index.html", form=form)
+
+    # pagination
+    page = request.args.get("page", 1, type=int)
+    todos = current_user.todos.order_by(Todo.created_on.desc()).paginate(page, 3, False)
+    next_url = url_for("index", page=todos.next_num) if todos.has_next else None
+    prev_url = url_for("index", page=todos.prev_num) if todos.has_prev else None
+    return render_template(
+        "index.html", form=form, todos=todos, next_url=next_url, prev_url=prev_url
+    )
 
 
 @app.route("/login")
@@ -29,6 +37,26 @@ def login():
     return auth0.authorize_redirect(
         redirect_uri=app.config["CALLBACK_URL"], audience=""
     )
+
+
+@app.route("/delete_todo/<id>")
+@login_required
+def delete_todo(id):
+    todo = current_user.todos.filter_by(id=id).first()
+    print(todo)
+    if not todo:
+        flash("sorry, todo does not exist", "error")
+        return redirect(url_for("index"))
+
+    try:
+        db.session.delete(todo)
+        db.session.commit()
+    except:
+        flash("something went wrong", "error")
+        return redirect(url_for("index"))
+
+    flash("todo deleted successfully", "success")
+    return redirect(url_for("index"))
 
 
 @app.route("/add_todo", methods=["POST"])

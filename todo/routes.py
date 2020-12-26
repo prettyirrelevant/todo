@@ -71,4 +71,5 @@ def logout():
         "returnTo": url_for("index", _external=True),
         "client_id": app.config["CLIENT_ID"],
     }
+    flash('logged out successfully', 'success')
     return redirect(auth0.api_base_url + "/v2/logout?" + urlencode(params))

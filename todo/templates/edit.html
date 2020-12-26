@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1 class="text-gray-100 uppercase lucky-font border-b-2 border-white mb-2 text-2xl mt-16">edit todo</h1>
+    <form class="mt-6 bg-gray-200 p-4 rounded-xl" action="{{ url_for('edit_todo', id=todo.id) }}" method="post">
+        {{ form.csrf_token }}
+        <div class="text-gray-900">
+            <p class="tracking-widest uppercase font-bold font-medium mb-1 text-sm">{{ form.tags.label }}</p>
+            {{ form.tags(class_="w-full rounded-lg p-2 text-gray-900 placeholder-gray-900 border-2 border-indigo-700", placeholder="important, school, chores") }}
+        </div>
+        <div class="mt-4">
+            <p class="tracking-widest uppercase font-bold font-medium mb-1 text-sm">{{ form.text.label }}</p>
+            {{ form.text(class_="overflow-none resize-none w-full rounded-lg text-gray-900 px-2 border-2 border-indigo-700 py-2") }}
+        </div>
+        <button class="w-full mt-4 px-4 py-2 uppercase tracking-wider font-bold text-lg rounded-lg bg-indigo-700 text-gray-100">
+            update todo
+        </button>
+    </form>
+{% endblock %}

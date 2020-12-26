@@ -1,3 +1,4 @@
+from datetime import datetime
 from urllib.parse import urlencode
 
 from flask import current_app as app, render_template, url_for, redirect, flash, request
@@ -24,7 +25,7 @@ def index():
 
     # pagination
     page = request.args.get("page", 1, type=int)
-    todos = current_user.todos.order_by(Todo.created_on.desc()).paginate(page, 3, False)
+    todos = current_user.todos.order_by(Todo.updated_on.desc()).paginate(page, 3, False)
     next_url = url_for("index", page=todos.next_num) if todos.has_next else None
     prev_url = url_for("index", page=todos.prev_num) if todos.has_prev else None
     return render_template(
@@ -37,6 +38,63 @@ def login():
     return auth0.authorize_redirect(
         redirect_uri=app.config["CALLBACK_URL"], audience=""
     )
+
+
+@app.route("/edit_todo/<id>", methods=["GET", "POST"])
+@login_required
+def edit_todo(id):
+    # check ownership of todo
+    todo = current_user.todos.filter_by(id=id).first()
+    if not todo:
+        flash("sorry, todo does not exist", "error")
+        return redirect(url_for("index"))
+
+    # reuse form since fields are exactly the same
+    form = AddTodoForm()
+    if form.validate_on_submit():
+
+        # compares previous tags to present one
+        if form.tags.data != ", ".join([tag.name for tag in todo.tags]):
+            # tag validation
+            validated_tags = []
+            tags = set(
+                [_.lower().strip() for _ in form.tags.data.split(",") if _ != ""]
+            )
+
+            if len(tags) != 0:
+                for tag in tags:
+                    __ = Tag.query.filter_by(name=tag).first()
+                    if __:
+                        validated_tags.append(__)
+                    else:
+                        try:
+                            new_tag = Tag(name=tag)
+                            db.session.add(new_tag)
+                            db.session.commit()
+                            validated_tags.append(new_tag)
+                        except:
+                            pass
+
+            todo.tags = validated_tags
+
+        # check if changes were made to text column
+        if form.text.data != todo.text:
+            todo.text = form.text.data
+
+        todo.updated_on = datetime.utcnow()
+        try:
+            db.session.commit()
+        except:
+            flash("something went wrong", "error")
+            return redirect(url_for("index"))
+
+        flash("todo updated successfully", "success")
+        return redirect(url_for("index"))
+
+    # populate fields on GET request
+    form.text.data = todo.text
+    form.tags.data = ", ".join([tag.name for tag in todo.tags])
+    return render_template("edit.html", form=form, todo=todo)
 
 
 @app.route("/delete_todo/<id>")

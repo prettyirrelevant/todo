@@ -23,14 +23,19 @@ auth0 = oauth.register(
 def index():
     form = AddTodoForm()
 
-    # pagination
-    page = request.args.get("page", 1, type=int)
-    todos = current_user.todos.order_by(Todo.updated_on.desc()).paginate(page, 3, False)
-    next_url = url_for("index", page=todos.next_num) if todos.has_next else None
-    prev_url = url_for("index", page=todos.prev_num) if todos.has_prev else None
-    return render_template(
-        "index.html", form=form, todos=todos, next_url=next_url, prev_url=prev_url
-    )
+    if current_user.is_authenticated:
+        # pagination
+        page = request.args.get("page", 1, type=int)
+        todos = current_user.todos.order_by(Todo.updated_on.desc()).paginate(
+            page, 3, False
+        )
+        next_url = url_for("index", page=todos.next_num) if todos.has_next else None
+        prev_url = url_for("index", page=todos.prev_num) if todos.has_prev else None
+        return render_template(
+            "index.html", form=form, todos=todos, next_url=next_url, prev_url=prev_url
+        )
+
+    return render_template("index.html", form=form)
 
 
 @app.route("/login")

@@ -5,7 +5,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 
 from . import oauth, db
 from .forms import AddTodoForm
-from .models import User
+from .models import User, Tag, Todo
 
 auth0 = oauth.register(
     "auth0",
@@ -21,7 +21,6 @@ auth0 = oauth.register(
 @app.route("/")
 def index():
     form = AddTodoForm()
-
     return render_template("index.html", form=form)
 
 
@@ -36,6 +35,36 @@ def login():
 @login_required
 def add_todo():
     form = AddTodoForm(request.form)
+    if form.validate_on_submit():
+        # tag validation
+        validated_tags = []
+        tags = set([_.lower().strip() for _ in form.tags.data.split(",") if _ != ""])
+
+        if len(tags) != 0:
+            for tag in tags:
+                __ = Tag.query.filter_by(name=tag).first()
+                if __:
+                    validated_tags.append(__)
+                else:
+                    try:
+                        new_tag = Tag(name=tag)
+                        db.session.add(new_tag)
+                        db.session.commit()
+                        validated_tags.append(new_tag)
+                    except:
+                        pass
+        new_todo = Todo(user_id=current_user.id, text=form.text.data)
+        new_todo.tags.extend(validated_tags)
+        try:
+            db.session.add(new_todo)
+            db.session.commit()
+        except:
+            flash("something went wrong", "error")
+            return redirect(url_for("index"))
+
+        flash("todo added successfully", "success")
+        return redirect(url_for("index"))
+    return redirect(url_for("index"))
 
 
 @app.route("/callback")

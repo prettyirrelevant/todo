@@ -14,9 +14,11 @@ login_manager = LoginManager()
 login_manager.login_view = "login"
 
 
-def create_app(dev_settings):
+def create_app(dev_settings, prod_settings):
     app = Flask(__name__)
     app.config.from_object(dev_settings)
+    # comment this if you're in dev mode
+    app.config.from_object(prod_settings)
 
     db.init_app(app)
     login_manager.init_app(app)

@@ -1,6 +1,6 @@
 from .development import *
 
-SQLALCHEMY_DATABASE_URI = environ.get("DATABASE_URI")
+SQLALCHEMY_DATABASE_URI = environ.get("DATABASE_URL")
 
 CALLBACK_URL = environ.get("CALLBACK_URL")
 

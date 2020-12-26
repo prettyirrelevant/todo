@@ -17,6 +17,28 @@
                 </a>
             </div>
         </div>
+
+        <form class="mt-10 bg-gray-200 p-4 rounded-xl" action="{{ url_for('add_todo') }}" method="post">
+            {{ form.csrf_token }}
+            <div class="text-gray-900">
+                <p class="tracking-widest uppercase font-bold font-medium mb-1 text-sm">{{ form.tags.label }}</p>
+                {{ form.tags(class_="w-full rounded-lg p-2 text-gray-900 placeholder-gray-900 border-2 border-indigo-700", placeholder="important, school, chores") }}
+            </div>
+            <div class="mt-4">
+                <p class="tracking-widest uppercase font-bold font-medium mb-1 text-sm">{{ form.text.label }}</p>
+                {{ form.text(class_="overflow-none resize-none w-full rounded-lg text-gray-900 px-2 border-2 border-indigo-700 py-2") }}
+            </div>
+            <button class="w-full mt-4 px-4 py-2 uppercase tracking-wider font-bold text-lg rounded-lg bg-indigo-700 text-gray-100">
+                add todo
+            </button>
+        </form>
+
+        <div class="mt-10 text-gray-100">
+            {% if current_user.todos.all()|length < 1 %}
+                <p class="uppercase font-extrabold text-center text-xl pt-24 tracking-wider lucky-font">no todo to display!!!</p>
+            {% else %}
+            {% endif %}
+        </div>
     {% else %}
         <div class="mt-52 text-gray-100 text-center">
             <p class="lucky-font mb-8 text-2xl text-gray-500 tracking-wider">Keep track and stay organised!</p>
@@ -24,4 +46,14 @@
                href="{{ url_for('login') }}" type="button">Sign up / Login</a>
         </div>
     {% endif %}
+
+    <script type="text/javascript">
+      textarea = document.querySelector("#text");
+      textarea.addEventListener('input', autoResize, false);
+
+      function autoResize() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+      }
+    </script>
 {% endblock %}

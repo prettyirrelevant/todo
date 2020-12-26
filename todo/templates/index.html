@@ -1,3 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
+    {% if current_user.is_authenticated %}
+        <div class="mt-10">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center text-gray-100 uppercase font-extrabold">
+                    <img class="mr-4 rounded-full w-10" alt="profile" src="{{ current_user.picture }}">
+                    <p class="tracking-widest md:text-2xl text-lg">{{ current_user.name }}</p>
+                </div>
+                <a class="block font-extrabold bg-gray-900 text-indigo-500" href="{{ url_for('logout') }}"
+                   type="button">
+                    <svg class="w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <div class="mt-52 text-gray-100 text-center">
+            <p class="lucky-font mb-8 text-2xl text-gray-500 tracking-wider">Keep track and stay organised!</p>
+            <a class="font-extrabold uppercase tracking-widest bg-indigo-600 rounded-full px-4 py-3 text-xl w-full block ring-4 ring-indigo-400 text-gray-300"
+               href="{{ url_for('login') }}" type="button">Sign up / Login</a>
+        </div>
+    {% endif %}
 {% endblock %}
